@@ -1,0 +1,35 @@
+#!/bin/bash
+echo "##############################################"
+echo "#                                            #"
+echo "#   Replacement for Shell Scripts - START    #"
+echo "#                                            #"
+echo "##############################################"
+echo ""
+echo "### create variables and demote ENV variables"
+s1={{REMOTE_SERVER_IP}}
+s2={{REMOTE_SERVER_USER}}
+s3={{REMOTE_SERVER_PASS}}
+export -n REMOTE_SERVER_IP
+export -n REMOTE_SERVER_USER
+export -n REMOTE_SERVER_PASS
+echo ""
+echo "### Replacement of REMOTE_SERVER_IP"
+sed -i "s|$s1|$REMOTE_SERVER_IP|g" /scripts/install-jira
+echo "### DONE"
+echo ""
+echo "### Replacement of REMOTE_SERVER_USER"
+sed -i "s|$s2|$REMOTE_SERVER_USER|g" /scripts/install-jira
+echo "### DONE"
+echo ""
+echo "### Replacement of REMOTE_SERVER_PASS"
+sed -i "s|$s3|$REMOTE_SERVER_PASS|g" /scripts/install-jira
+echo "### DONE"
+echo ""
+echo "##############################################"
+echo "#                                            #"
+echo "#   Replacement for Shell Scripts - DONE     #"
+echo "#                                            #"
+echo "##############################################"
+echo ""
+echo ""
+echo ""
