@@ -35,24 +35,34 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
     && echo '### Create folders' \
     && mkdir /scripts
 
+WORKDIR /tmp
+
+RUN wget --no-check-certificate --progress=bar --show-progress https://downloads.atlassian.com/software/jira/downloads/atlassian-jira-software-7.6.2.tar.gz \
+    && wget --no-check-certificate --progress=bar --show-progress https://downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.6.1.tar.gz
+
+WORKDIR /
+
 # copy scripts into container
-COPY scripts/install-jira /scripts/
+COPY scripts/install-jira.sh /scripts/
 COPY scripts/env-script-replacement /scripts/
 COPY scripts/env-xml-replacement /scripts/
 
 # Copy configs to tmp folder (will get copied in install script)
-COPY config/server.xml /tmp/
+COPY config/jira-server.xml /tmp/
+COPY config/confluence-server.xml /tmp/
 COPY config/dbconfig.xml /tmp/
 
 # Copy jira service script and nginx config
 COPY scripts/jira /etc/init.d/
+COPY scripts/confluence /etc/init.d/
 COPY config/jira.conf /etc/nginx/conf.d/
 
 # make scripts executable and start nginx
-RUN chmod a+x /scripts/install-jira \
+RUN chmod a+x /scripts/install-jira.sh \
     && chmod a+x /scripts/env-xml-replacement \
     && chmod a+x /scripts/env-script-replacement \
     && chmod \+x /etc/init.d/jira \
+    && chmod \+x /etc/init.d/confluence \
     && update-rc.d jira defaults
 
 # Expose port 80 to access jira locally
@@ -60,7 +70,7 @@ EXPOSE 80
 
 ENTRYPOINT ./scripts/env-script-replacement \
            && ./scripts/env-xml-replacement \
-           && ./scripts/install-jira \
+           && ./scripts/install-jira.sh \
            && /bin/bash
 
 CMD /bin/bash

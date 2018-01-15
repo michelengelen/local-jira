@@ -1,0 +1,3 @@
+
+#wget --no-check-certificate --progress=bar --show-progress https://downloads.atlassian.com/software/jira/downloads/atlassian-jira-software-7.6.2.tar.gz
+#wget --no-check-certificate --progress=bar --show-progress https://downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.6.1.tar.gz
