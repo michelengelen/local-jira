@@ -1,13 +1,11 @@
 #!/bin/sh -e
 # Confluence startup script
-#chkconfig: 2345 80 05
-#description: JIRA
 
 # Define some variables
 # Name of app ( JIRA, Confluence, etc )
 APP=confluence
 # Name of the user to run as
-USER=jira
+USER=confluence
 # Location of application's bin directory
 BASE=/opt/atlassian/confluence/current
 # Location of Java JDK

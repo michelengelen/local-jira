@@ -14,17 +14,20 @@ export -n JIRA_ENV_DB_USER
 export -n JIRA_ENV_DB_PASS
 echo ""
 echo "### Replacement of JIRA_ENV_DB_URL"
-sed -i "s|$s1|$JIRA_ENV_DB_URL|g" /tmp/server.xml
+sed -i "s|$s1|$JIRA_ENV_DB_URL|g" /tmp/jira-server.xml
+sed -i "s|$s1|$JIRA_ENV_DB_URL|g" /tmp/confluence-server.xml
 sed -i "s|$s1|$JIRA_ENV_DB_URL|g" /tmp/dbconfig.xml
 echo "### DONE"
 echo ""
 echo "### Replacement of JIRA_ENV_DB_USER"
-sed -i "s|$s2|$JIRA_ENV_DB_USER|g" /tmp/server.xml
+sed -i "s|$s2|$JIRA_ENV_DB_USER|g" /tmp/jira-server.xml
+sed -i "s|$s2|$JIRA_ENV_DB_USER|g" /tmp/confluence-server.xml
 sed -i "s|$s2|$JIRA_ENV_DB_USER|g" /tmp/dbconfig.xml
 echo "### DONE"
 echo ""
 echo "### Replacement of JIRA_ENV_DB_PASS"
-sed -i "s|$s3|$JIRA_ENV_DB_PASS|g" /tmp/server.xml
+sed -i "s|$s3|$JIRA_ENV_DB_PASS|g" /tmp/jira-server.xml
+sed -i "s|$s3|$JIRA_ENV_DB_PASS|g" /tmp/confluence-server.xml
 sed -i "s|$s3|$JIRA_ENV_DB_PASS|g" /tmp/dbconfig.xml
 echo "### DONE"
 echo ""
