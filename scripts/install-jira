@@ -5,37 +5,32 @@ echo "#   Install script for JIRA - START          #"
 echo "#                                            #"
 echo "##############################################"
 echo ""
-echo "### Step 1 - Download JIRA install archive"
-cd /tmp/
-wget --no-check-certificate --progress=bar --show-progress https://downloads.atlassian.com/software/jira/downloads/atlassian-jira-software-7.5.0.tar.gz
-echo "### DONE"
-echo ""
-echo "### Step 2 - creating dedicated user 'jira'"
+echo "### Step 1 - creating dedicated user 'jira'"
 sudo useradd --create-home -c "JIRA role account" {{REMOTE_SERVER_USER}}
 echo "### DONE"
 echo ""
-echo "### Step 3 - creating folders for installing JIRA and JIRA Home"
-sudo mkdir /var/atlassian && sudo mkdir /var/atlassian/application-data && sudo mkdir /var/atlassian/application-data/jira && sudo mkdir /var/atlassian/application-data/jira/data
-sudo mkdir /opt/atlassian && sudo mkdir /opt/atlassian/jira
+echo "### Step 2 - creating folders for installing JIRA and JIRA Home"
+sudo mkdir /var/atlassian /var/atlassian/application-data /var/atlassian/application-data/jira /var/atlassian/application-data/jira/data /var/atlassian/application-data/jira/caches
+sudo mkdir /opt/atlassian /opt/atlassian/jira
 echo "### DONE"
 echo ""
-echo "### Step 4 - changing permissions for jira folders"
+echo "### Step 3 - changing permissions for jira folders"
 sudo chown -R {{REMOTE_SERVER_USER}}:{{REMOTE_SERVER_USER}} /opt/atlassian/jira
 sudo chown -R {{REMOTE_SERVER_USER}}:{{REMOTE_SERVER_USER}} /var/atlassian/application-data/jira
 sudo chown -R {{REMOTE_SERVER_USER}}:{{REMOTE_SERVER_USER}} /jira-files
 cd /opt/atlassian/jira
 echo "### DONE"
 echo ""
-echo "### Step 5 - unpack JIRA and add symlink"
-sudo su {{REMOTE_SERVER_USER}} -c 'tar -zxf /tmp/atlassian-jira-software-7.5.0.tar.gz'
-sudo su {{REMOTE_SERVER_USER}} -c 'ln -s atlassian-jira-software-7.5.0-standalone/ current'
+echo "### Step 4 - unpack JIRA and add symlink"
+sudo su {{REMOTE_SERVER_USER}} -c 'tar -zxf /tmp/atlassian-jira-software-7.6.2.tar.gz'
+sudo su {{REMOTE_SERVER_USER}} -c 'ln -s atlassian-jira-software-7.6.2-standalone/ current'
 echo "### DONE"
 echo ""
-echo "### Step 6 - add JIRA home directory to properties"
+echo "### Step 5 - add JIRA home directory to properties"
 echo "jira.home=/var/atlassian/application-data/jira" > /opt/atlassian/jira/current/atlassian-jira/WEB-INF/classes/jira-application.properties
 echo "### DONE"
 echo ""
-echo "### Step 7 - copy config files into install folder"
+echo "### Step 6 - copy config files into install folder"
 cp /tmp/server.xml /opt/atlassian/jira/current/conf/
 cp /tmp/dbconfig.xml /var/atlassian/application-data/jira/
 echo "### DONE"
@@ -70,6 +65,13 @@ echo "### Step 4 - Test Connection to remote host and create folder for file sto
 ssh {{REMOTE_SERVER_USER}}@{{REMOTE_SERVER_IP}} "mkdir ~/jira-files"
 echo "### DONE"
 echo ""
+echo "### Step 5 - Mount file folder"
+rm -rf /var/atlassian/application-data/jira/data/attachments
+rm -rf /var/atlassian/application-data/jira/data/avatars
+sshfs -o allow_other -o reconnect -o nonempty -o ServerAliveInterval=15 -o IdentityFile=~/.ssh/id_rsa {{REMOTE_SERVER_USER}}@{{REMOTE_SERVER_IP}}:/home/{{REMOTE_SERVER_USER}}/jira-files /var/atlassian/application-data/jira/data/
+sshfs -o allow_other -o reconnect -o nonempty -o ServerAliveInterval=15 -o IdentityFile=~/.ssh/id_rsa {{REMOTE_SERVER_USER}}@{{REMOTE_SERVER_IP}}:/home/{{REMOTE_SERVER_USER}}/jira-cache /var/atlassian/application-data/jira/caches/
+echo "### DONE"
+echo ""
 echo "##############################################"
 echo "#                                            #"
 echo "#  Configuring SSH Access - DONE             #"
@@ -86,16 +88,11 @@ echo "##############################################"
 echo ""
 echo "### Step 1 - Starting up JIRA"
 sudo /etc/init.d/jira start
+sleep 5
 echo "### DONE"
 echo ""
 echo "### Step 2 - Starting up nginx"
 sudo /etc/init.d/nginx start
-echo "### DONE"
-echo ""
-echo "### Step 3 - Mount file folder"
-rm -rf /var/atlassian/application-data/jira/data/attachments
-rm -rf /var/atlassian/application-data/jira/data/avatars
-sshfs -o allow_other -o reconnect -o nonempty -o ServerAliveInterval=15 -o IdentityFile=~/.ssh/id_rsa {{REMOTE_SERVER_USER}}@{{REMOTE_SERVER_IP}}:/home/{{REMOTE_SERVER_USER}}/jira-files /var/atlassian/application-data/jira/data/
 echo "### DONE"
 echo ""
 echo "##############################################"

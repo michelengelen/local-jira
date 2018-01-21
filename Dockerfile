@@ -2,9 +2,6 @@ FROM ubuntu:xenial
 
 ENV TERM linux
 
-# TODO:
-# add reindex script to startup
-
 # Install sudo, create script directory
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
     && echo '### Update apt-get ###' \
@@ -34,6 +31,15 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
     && sudo apt-get install -y oracle-java8-installer \
     && echo '### Create folders' \
     && mkdir /scripts
+
+# change working directory for getting jira install data
+WORKDIR /tmp
+
+# download JIRA install archive
+RUN wget --no-check-certificate --progress=bar --show-progress https://downloads.atlassian.com/software/jira/downloads/atlassian-jira-software-7.6.2.tar.gz
+
+# change back workdir to root
+WORKDIR /
 
 # copy scripts into container
 COPY scripts/install-jira /scripts/
